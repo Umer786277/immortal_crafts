@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VoiceIQ — AI Voice Agents for Modern Business</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #060910;
+    --surface: #0d1117;
+    --surface2: #131920;
+    --border: rgba(255,255,255,0.07);
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --text: #f0f4f8;
+    --muted: #8899aa;
+    --card-bg: rgba(255,255,255,0.03);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* GRID BACKGROUND */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(6,9,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.4rem;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2rem; align-items: center; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    background: var(--accent);
+    color: #000 !important;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    transition: opacity 0.2s !important;
+  }
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(0,229,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-glow2 {
+    position: absolute;
+    top: 40%;
+    left: 30%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(124,58,237,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s ease both;
+  }
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    max-width: 900px;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .hero h1 .accent { color: var(--accent); }
+  .hero h1 .accent2 { color: #a78bfa; }
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 560px;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.85rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 30px rgba(0,229,255,0.25);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 50px rgba(0,229,255,0.4);
+  }
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--text);
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.85rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .btn-secondary:hover {
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.04);
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin-top: 4rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 700px;
+    width: 100%;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+  .stat-item {
+    flex: 1;
+    min-width: 140px;
+    padding: 1.25rem 1.5rem;
+    text-align: center;
+    border-right: 1px solid var(--border);
+    background: var(--card-bg);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* WAVE ANIMATION */
+  .wave-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    margin: 3rem auto 0;
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+  .wave-bar {
+    width: 3px;
+    border-radius: 3px;
+    background: var(--accent);
+    opacity: 0.6;
+    animation: wave 1.4s ease-in-out infinite;
+  }
+  .wave-bar:nth-child(1) { height: 12px; animation-delay: 0s; }
+  .wave-bar:nth-child(2) { height: 24px; animation-delay: 0.1s; }
+  .wave-bar:nth-child(3) { height: 36px; animation-delay: 0.2s; }
+  .wave-bar:nth-child(4) { height: 48px; animation-delay: 0.3s; }
+  .wave-bar:nth-child(5) { height: 36px; animation-delay: 0.4s; }
+  .wave-bar:nth-child(6) { height: 24px; animation-delay: 0.5s; }
+  .wave-bar:nth-child(7) { height: 36px; animation-delay: 0.4s; }
+  .wave-bar:nth-child(8) { height: 48px; animation-delay: 0.3s; }
+  .wave-bar:nth-child(9) { height: 36px; animation-delay: 0.2s; }
+  .wave-bar:nth-child(10) { height: 24px; animation-delay: 0.1s; }
+  .wave-bar:nth-child(11) { height: 12px; animation-delay: 0s; }
+  @keyframes wave {
+    0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
+    50% { transform: scaleY(1); opacity: 1; }
+  }
+  .wave-label {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-align: center;
+    margin-top: 0.5rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  /* PROBLEM */
+  .problem {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+  .section-sub {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 500px;
+    font-weight: 300;
+    margin-bottom: 3rem;
+  }
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+  .problem-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: border-color 0.2s;
+  }
+  .problem-card:hover { border-color: rgba(255,100,100,0.3); }
+  .problem-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .problem-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #ff6b6b;
+  }
+  .problem-card p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+  /* HOW IT WORKS */
+  .how {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+    position: relative;
+  }
+  .step-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .step-card:hover {
+    border-color: rgba(0,229,255,0.25);
+    transform: translateY(-4px);
+  }
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    color: rgba(0,229,255,0.1);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .step-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .step-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+  /* SERVICES */
+  .services {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+  .service-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-color, var(--accent)), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .service-card:hover { border-color: rgba(0,229,255,0.2); transform: translateY(-4px); }
+  .service-card:hover::before { opacity: 1; }
+  .service-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    margin-bottom: 1.25rem;
+  }
+  .service-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .service-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+  .service-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* INDUSTRIES */
+  .industries {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .industry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+  .industry-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: default;
+  }
+  .industry-card:hover {
+    border-color: rgba(0,229,255,0.3);
+    background: rgba(0,229,255,0.04);
+  }
+  .industry-emoji { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+  .industry-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .industry-desc { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* CTA SECTION */
+  .cta-section {
+    padding: 8rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-glow {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px; height: 400px;
+    background: radial-gradient(ellipse, rgba(0,229,255,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta-section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+  .cta-section p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 480px;
+    margin: 0 auto 2.5rem;
+    font-weight: 300;
+    position: relative;
+  }
+  .cta-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .btn-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #25d366;
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 1rem 2.25rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 30px rgba(37,211,102,0.25);
+  }
+  .btn-wa:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 50px rgba(37,211,102,0.4);
+  }
+  .wa-icon {
+    width: 22px; height: 22px;
+    fill: white;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* CHECKLIST */
+  .checklist { list-style: none; margin-top: 1.5rem; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    padding: 0.4rem 0;
+  }
+  .check {
+    width: 18px; height: 18px;
+    min-width: 18px;
+    border-radius: 50%;
+    background: rgba(16,185,129,0.15);
+    border: 1px solid rgba(16,185,129,0.3);
+    color: var(--accent3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  /* DEMO SECTION */
+  .demo-section {
+    padding: 5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .demo-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  @media (max-width: 768px) { .demo-inner { grid-template-columns: 1fr; } }
+  .demo-video-wrap {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: #000;
+    aspect-ratio: 16/9;
+  }
+  .demo-video-wrap iframe {
+    width: 100%; height: 100%;
+    border: none;
+    display: block;
+  }
+  .demo-video-label {
+    position: absolute;
+    top: 12px; left: 12px;
+    background: rgba(0,0,0,0.7);
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 100px;
+    border: 1px solid rgba(0,229,255,0.3);
+  }
+  .try-live-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .try-live-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .try-live-card p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .demo-numbers { display: flex; flex-direction: column; gap: 0.75rem; }
+  .demo-num-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(0,229,255,0.05);
+    border: 1px solid rgba(0,229,255,0.15);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+  }
+  .demo-num-btn:hover {
+    background: rgba(0,229,255,0.1);
+    border-color: rgba(0,229,255,0.35);
+    transform: translateX(4px);
+  }
+  .demo-flag { font-size: 1.5rem; }
+  .demo-num-info { flex: 1; }
+  .demo-country { font-size: 0.78rem; font-weight: 700; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+  .demo-number { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--accent); }
+  .demo-arrow { color: var(--accent); font-size: 1.1rem; opacity: 0.6; }
+  .live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.25);
+    color: #10b981;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+    width: fit-content;
+  }
+  .live-dot {
+    width: 6px; height: 6px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .hero { padding: 7rem 1.25rem 3rem; }
+    .problem, .how, .services, .industries { padding: 4rem 1.25rem; }
+    .stats-bar { flex-direction: column; }
+    .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+    .stat-item:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Voice<span>IQ</span></div>
+  <div class="nav-links">
+    <a href="#demo">Live Demo</a>
+    <a href="#services">Services</a>
+    <a href="#industries">Industries</a>
+    <a href="#how">How it works</a>
+    <a href="https://wa.me/923706859678?text=Hi%2C%20I%27m%20interested%20in%20AI%20Voice%20Agents%20for%20my%20business" class="nav-cta">Get a Demo</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-badge">
+    <span class="badge-dot"></span>
+    AI Voice Agents — Now Live
+  </div>
+  <h1>Never Miss a <span class="accent">Call.</span><br/>Never Lose a <span class="accent2">Client.</span></h1>
+  <p class="hero-sub">We build AI Voice Agents that answer calls, qualify leads, and book appointments — automatically, 24/7, for any business.</p>
+  <div class="hero-actions">
+    <a href="https://wa.me/923706859678?text=Hi%2C%20I%27m%20interested%20in%20AI%20Voice%20Agents%20for%20my%20business" class="btn-primary">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Get a Free Demo
+    </a>
+    <a href="#demo" class="btn-secondary">▶ Watch live demo</a>
+  </div>
+
+  <div class="wave-container">
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+    <div class="wave-bar"></div>
+  </div>
+  <div class="wave-label">AI voice agent — live</div>
+
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">Always available</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">&lt;60s</div>
+      <div class="stat-label">Response time</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Missed calls</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label">Automated</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO SECTION -->
+<section class="demo-section" id="demo">
+  <span class="section-tag">See it in action</span>
+  <h2 class="section-title">Hear it. Try it.<br/>Then decide.</h2>
+  <p class="section-sub">Watch a real AI voice agent in action — then call our live demo line and experience it yourself.</p>
+  <div class="demo-inner">
+    <div class="demo-video-wrap">
+      <div class="demo-video-label">▶ Watch demo</div>
+      <iframe
+        src="https://www.loom.com/embed/7e31a576cc844ec0a6352bf26f5d9a79?autoplay=0&hide_owner=true&hide_share=true&hide_title=false&hideEmbedTopBar=true"
+        allowfullscreen
+        allow="autoplay; fullscreen"
+      ></iframe>
+    </div>
+    <div class="try-live-card">
+      <div class="live-pill"><span class="live-dot"></span> Live right now</div>
+      <h3>Call our AI agent yourself</h3>
+      <p>Pick up your phone and call one of the numbers below. You'll speak to a real AI voice agent — the same technology we'll build for your business.</p>
+      <div class="demo-numbers">
+        <a href="tel:+447401110068" class="demo-num-btn">
+          <span class="demo-flag">🇬🇧</span>
+          <div class="demo-num-info">
+            <div class="demo-country">United Kingdom</div>
+            <div class="demo-number">+44 740 111 0068</div>
+          </div>
+          <span class="demo-arrow">→</span>
+        </a>
+        <a href="tel:0468011111" class="demo-num-btn">
+          <span class="demo-flag">🇦🇺</span>
+          <div class="demo-num-info">
+            <div class="demo-country">Australia</div>
+            <div class="demo-number">0468 011 111</div>
+          </div>
+          <span class="demo-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <span class="section-tag">The problem</span>
+  <h2 class="section-title">Every missed call is<br/>a lost client.</h2>
+  <p class="section-sub">Most businesses lose leads every single day without realising it. Here's why.</p>
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="problem-icon">📵</div>
+      <h3>Calls go unanswered</h3>
+      <p>Your team is busy, it's after hours, or no one picks up in time. The lead moves on to a competitor.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">🐌</div>
+      <h3>Slow follow-ups</h3>
+      <p>Research shows leads go cold within 5 minutes. Manual follow-ups are too slow to convert.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">📋</div>
+      <h3>Manual scheduling</h3>
+      <p>Back-and-forth booking wastes hours of staff time that could go toward serving paying customers.</p>
+    </div>
+    <div class="problem-card">
+      <div class="problem-icon">💸</div>
+      <h3>High staffing costs</h3>
+      <p>Hiring receptionists and SDRs is expensive. AI handles the same work at a fraction of the cost.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <span class="section-tag">How it works</span>
+  <h2 class="section-title">Up and running<br/>in 3 simple steps.</h2>
+  <p class="section-sub">No technical knowledge required. We handle everything from setup to go-live.</p>
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <h3>We learn your business</h3>
+      <p>Tell us about your services, FAQs, and how you want calls handled. We configure the agent to sound like your brand.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <h3>We build & connect</h3>
+      <p>We build your custom AI voice agent and connect it to your phone number, calendar, and CRM in days — not weeks.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <h3>Go live & grow</h3>
+      <p>Your agent goes live. It answers calls, books appointments, and follows up with leads — 24/7, on autopilot.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <span class="section-tag">What we build</span>
+  <h2 class="section-title">Everything your<br/>phone needs — automated.</h2>
+  <p class="section-sub">Custom AI voice agents built for your exact use case.</p>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon" style="background: rgba(0,229,255,0.1);">📞</div>
+      <h3>Inbound call handling</h3>
+      <p>Your AI agent answers every call instantly, greets customers professionally, answers FAQs, and routes to the right person when needed.</p>
+      <div class="service-tags">
+        <span class="tag">24/7 availability</span>
+        <span class="tag">Lead qualification</span>
+        <span class="tag">Smart routing</span>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background: rgba(124,58,237,0.1);">🔁</div>
+      <h3>Outbound follow-up calls</h3>
+      <p>When a new lead comes in, your AI agent calls them back within 60 seconds — qualifying them and moving them through your sales funnel automatically.</p>
+      <div class="service-tags">
+        <span class="tag">60-sec response</span>
+        <span class="tag">Lead scoring</span>
+        <span class="tag">Auto follow-up</span>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background: rgba(16,185,129,0.1);">📅</div>
+      <h3>Appointment scheduling</h3>
+      <p>Your AI agent checks availability, books appointments, sends confirmations, and reminds clients — all without a single human involved.</p>
+      <div class="service-tags">
+        <span class="tag">Calendar sync</span>
+        <span class="tag">Reminders</span>
+        <span class="tag">No-show reduction</span>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background: rgba(251,191,36,0.1);">🏥</div>
+      <h3>Medical & vet receptionist</h3>
+      <p>HIPAA-aware agents that handle patient intake, appointment booking, prescription queries, and after-hours calls for clinics and vet practices.</p>
+      <div class="service-tags">
+        <span class="tag">Patient intake</span>
+        <span class="tag">After-hours</span>
+        <span class="tag">Clinic-specific</span>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background: rgba(239,68,68,0.1);">🏠</div>
+      <h3>Real estate & legal intake</h3>
+      <p>Qualify property enquiries, book viewings, and handle legal client intake calls — all done automatically while you focus on closing deals.</p>
+      <div class="service-tags">
+        <span class="tag">Lead qualification</span>
+        <span class="tag">Viewing bookings</span>
+        <span class="tag">Client intake</span>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon" style="background: rgba(0,229,255,0.08);">⚡</div>
+      <h3>Custom business agent</h3>
+      <p>Any industry, any workflow. We build fully custom AI voice agents tailored to how your specific business operates and communicates.</p>
+      <div class="service-tags">
+        <span class="tag">Any industry</span>
+        <span class="tag">Custom flows</span>
+        <span class="tag">Full setup</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- INDUSTRIES -->
+<section class="industries" id="industries">
+  <span class="section-tag">Industries we serve</span>
+  <h2 class="section-title">Built for your industry,<br/>out of the box.</h2>
+  <p class="section-sub">We've built agents for businesses across every sector. If your business takes calls, we can automate them.</p>
+  <div class="industry-grid">
+    <div class="industry-card">
+      <span class="industry-emoji">🏥</span>
+      <div class="industry-name">Healthcare</div>
+      <div class="industry-desc">Clinics & hospitals</div>
+    </div>
+    <div class="industry-card">
+      <span class="industry-emoji">🐾</span>
+      <div class="industry-name">Vet Clinics</div>
+      <div class="industry-desc">Animal care centres</div>
+    </div>
+    <div class="industry-card">
+      <span class="industry-emoji">🏠</span>
+      <div class="industry-name">Real Estate</div>
+      <div class="industry-desc">Agents & agencies</div>
+    </div>
+    <div class="industry-card">
+      <span class="industry-emoji">⚖️</span>
+      <div class="industry-name">Legal</div>
+      <div class="industry-desc">Law firms</div>
+    </div>
+    <div class="industry-card">
+      <span class="industry-emoji">💇</span>
+      <div class="industry-name">Salons & Spas</div>
+      <div class="industry-desc">Beauty businesses</div>
+    </div>
+    <div class="industry-card">
+      <span class="industry-emoji">🍽️</span>
+      <div class="industry-name">Restaurants</div>
+      <div class="industry-desc">Reservations & orders</div>
+    </div>
+    <div class="industry-card">
+      <span class="industry-emoji">🔧</span>
+      <div class="industry-name">Home Services</div>
+      <div class="industry-desc">Plumbers, electricians</div>
+    </div>
+    <div class="industry-card">
+      <span class="industry-emoji">🚀</span>
+      <div class="industry-name">Any Business</div>
+      <div class="industry-desc">Custom for you</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <h2>Ready to automate<br/>your business calls?</h2>
+  <p>Call our live demo line right now — or chat with us on WhatsApp for a free 15-minute personalised demo. No commitment needed.</p>
+  <div class="cta-actions">
+    <a href="https://wa.me/923706859678?text=Hi%2C%20I%27m%20interested%20in%20AI%20Voice%20Agents%20for%20my%20business" class="btn-wa">
+      <svg class="wa-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Chat on WhatsApp — Free
+    </a>
+    <a href="tel:+447401110068" class="btn-secondary">🇬🇧 Call UK Demo: +44 740 111 0068</a>
+    <a href="tel:0468011111" class="btn-secondary">🇦🇺 Call AU Demo: 0468 011 111</a>
+  </div>
+  <p style="margin-top:1.5rem; font-size:0.8rem; color: var(--muted); position:relative;">Call the demo line to hear a live AI agent — same tech we build for your business.</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 VoiceIQ · AI Voice Agents · <a href="https://wa.me/923706859678">+92 370 685 9678</a></p>
+</footer>
+
+</body>
+</html>
